@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 
 import './App.css'
 
@@ -7,6 +7,9 @@ function App() {
   const [numAllowed, setNumAllowed] = useState(false)
   const [charAllowed, setCharAllowed] = useState(false)
   const [password, setPassword] = useState("")
+
+  //useRef Hook
+  const passwordRef = useRef(null);
  
   const passwordGenerator = useCallback(() => {
     let pass = "";
@@ -26,6 +29,14 @@ function App() {
     setPassword(pass);
 
   }, [length, numAllowed, charAllowed, setPassword])
+
+  const copyPasswordToClipboard = useCallback(() => {
+    passwordRef.current?.select();
+    passwordRef.current?.setSelectionRange(0, 100);
+    window.navigator.clipboard.writeText(password);
+  }, 
+  [password])
+
   useEffect(() => {
     passwordGenerator()
   }, [length, numAllowed, charAllowed, passwordGenerator])
@@ -42,8 +53,10 @@ function App() {
           className='outline-none w-full py-1 px-3 bg-white text-gray-800'
           placeholder='password'
           readOnly
+          ref={passwordRef}
           />
           <button 
+          onClick={copyPasswordToClipboard}
           className='outline-none bg-blue-700 text-white px-3 py-0.5 shrink-0'
           >Copy</button>
           </div>
